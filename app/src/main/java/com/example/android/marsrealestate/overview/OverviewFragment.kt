@@ -36,7 +36,14 @@ class OverviewFragment : Fragment() {
      * Lazily initialize our [OverviewViewModel].
      */
     private val viewModel: OverviewViewModel by lazy {
-        ViewModelProvider(this).get(OverviewViewModel::class.java)
+        val activity = requireNotNull(this.activity) {
+            "You can only access the viewModel after onViewCreated()"
+        }
+        //The ViewModelProviders (plural) is deprecated.
+        //ViewModelProviders.of(this, DevByteViewModel.Factory(activity.application)).get(DevByteViewModel::class.java)
+        ViewModelProvider(this, OverviewViewModel.Factory(activity.application)).get(OverviewViewModel::class.java)
+
+//        ViewModelProvider(this).get(OverviewViewModel::class.java)
     }
 
     /**
@@ -62,14 +69,14 @@ class OverviewFragment : Fragment() {
         // Observe the navigateToSelectedProperty LiveData and Navigate when it isn't null
         // After navigating, call displayPropertyDetailsComplete() so that the ViewModel is ready
         // for another navigation event.
-        viewModel.navigateToSelectedProperty.observe(this, Observer {
-            if ( null != it ) {
-                // Must find the NavController from the Fragment
-                this.findNavController().navigate(OverviewFragmentDirections.actionShowDetail(it))
-                // Tell the ViewModel we've made the navigate call to prevent multiple navigation
-                viewModel.displayPropertyDetailsComplete()
-            }
-        })
+//        viewModel.navigateToSelectedProperty.observe(this, Observer {
+//            if ( null != it ) {
+//                // Must find the NavController from the Fragment
+//                this.findNavController().navigate(OverviewFragmentDirections.actionShowDetail(it))
+//                // Tell the ViewModel we've made the navigate call to prevent multiple navigation
+//                viewModel.displayPropertyDetailsComplete()
+//            }
+//        })
 
         setHasOptionsMenu(true)
         return binding.root

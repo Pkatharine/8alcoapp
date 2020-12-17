@@ -39,7 +39,7 @@ class PhotoGridAdapter( val onClickListener: OnClickListener ) :
     class AlcoPropertyViewHolder(private var binding: GridViewItemBinding):
             RecyclerView.ViewHolder(binding.root) {
         fun bind(alcoProperty: AlcoProperty) {
-            binding.property = alcoProperty
+//            binding.property = alcoProperty
             // This is important, because it forces the data binding to execute immediately,
             // which allows the RecyclerView to make the correct view size measurements
             binding.executePendingBindings()

@@ -21,9 +21,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
+
         <variable
-            name="property"
-            type="com.example.android.marsrealestate.network.AlcoProperty" />
+            name="alco"
+            type="com.example.android.marsrealestate.domain.Alco" />
     </data>
     <ImageView
         android:id="@+id/mars_image"
@@ -32,6 +33,6 @@
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:padding="2dp"
-        app:imageUrl="@{property.imgSrcUrl}"
+        app:imageUrl="@{alco.url}"
         tools:src="@tools:sample/backgrounds/scenic"/>
 </layout>

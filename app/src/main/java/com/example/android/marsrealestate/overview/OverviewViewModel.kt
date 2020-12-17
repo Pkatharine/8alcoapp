@@ -17,22 +17,22 @@
 
 package com.example.android.marsrealestate.overview
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.*
 import com.example.android.marsrealestate.network.AlcoApi
 import com.example.android.marsrealestate.network.AlcoApiFilter
 import com.example.android.marsrealestate.network.AlcoProperty
 //import kotlinx.coroutines.CoroutineScope
 //import kotlinx.coroutines.Dispatchers
-import androidx.lifecycle.viewModelScope
+import com.example.android.marsrealestate.database.getDatabase
+import com.example.android.marsrealestate.repository.AlcosRepository
 import kotlinx.coroutines.launch
 
 enum class AlcoApiStatus { LOADING, ERROR, DONE }
 /**
  * The [ViewModel] that is attached to the [OverviewFragment].
  */
-class OverviewViewModel : ViewModel() {
+class OverviewViewModel (application: Application): AndroidViewModel(application) {
 
     // The internal MutableLiveData that stores the status of the most recent request
     private val _status = MutableLiveData<AlcoApiStatus>()
@@ -40,6 +40,7 @@ class OverviewViewModel : ViewModel() {
     // The external immutable LiveData for the request status
     val status: LiveData<AlcoApiStatus>
         get() = _status
+
 
     // Internally, we use a MutableLiveData, because we will be updating the List of MarsProperty
     // with new values
@@ -61,8 +62,31 @@ class OverviewViewModel : ViewModel() {
     /**
      * Call getMarsRealEstateProperties() on init so we can display status immediately.
      */
+
+    private val database = getDatabase(application.applicationContext)
+    private val alcoRepository = AlcosRepository(database)
     init {
-        getAlcoProperties(AlcoApiFilter.SHOW_ALL)
+        viewModelScope.launch {
+            alcoRepository.refreshAlcos()
+        }
+
+    }
+
+//    init {
+//        getAlcoProperties(AlcoApiFilter.SHOW_ALL)
+//    }
+
+    val playlist = alcoRepository.alcos
+
+
+    class Factory(val app: Application) : ViewModelProvider.Factory {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(OverviewViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return OverviewViewModel(app) as T
+            }
+            throw IllegalArgumentException("Unable to construct viewmodel")
+        }
     }
 
     /**
